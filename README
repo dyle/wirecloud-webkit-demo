@@ -1,0 +1,235 @@
+AIT Native WireCloud-Webkit Demo
+================================
+
+This code sample investigates how to integrate WireCloud GUI into native C/C++ clients.
+
+This is part of the Crisma Porject, 7th Framework program of the EU - http://www.crismaproject.eu.
+
+The source code is arranged as a CMake (see: http://www.cmake.org/) project.
+
+
+
+1. Preperation for building from source:
+========================================
+
+
+Unix/Linux:
+-----------
+
+In order to build the native simple BackMeUp client GUI you have to install
+    - Qt4 developer libraries 
+    - a recent C++ boost developer pack.
+    
+For a Debian system this should be resolved by doing
+
+    # apt-get install build-essential g++ gcc cmake libqt4-dev libboost-all-dev doxygen
+
+Now unpack the source tarball:
+
+    $ tar -xvzf wirecloud-webkit-0.2.tar.gz
+    
+    
+    
+Windows:
+--------    
+
+On Windows you should get this software installed:
+
+    Visual C++ Express 2012
+    Qt4 (at least V4.6)
+    Doxygen
+    CMake (at least V2.8)
+    Boost (at least V1.49)
+    
+    or alternatively
+    
+    Cygwin 1.7
+    gcc (with g++ at least 4.6.3)
+    Qt 4 (at least 4.6)
+    Doxygen
+    CMake (at least V2.8)
+    Boost (at least V1.49)
+    
+How you can install this software and from where to obtain it is left to the reader.
+
+We strongly recommend to obtain the software as source and build it on the machine. Otherwise you'll end up with conflicting compilation references. This is especially true for boost and Qt. A typical linker error hinting you to this is:
+
+     "mismatch detected for '_MSC_VER': value '1600' doesn't match value '1700'"
+     
+     This means, that during linkage conflicting object files are discovered, since they have been compiled with conflicting Microsoft compilers.
+     
+Building Qt from source requires about 5-7 hours and around 6 GB HD free space though. Numbers may vary. Consider yourself warned.
+
+You may obtain some free precompiled version of the net and if you are lucky the'll work with the current Visual Studio. And if you are super-super lucky it will have WebKit support enabled ...
+     
+Also don't forget to build Qt with Webkit support. This can be achieved by typing
+
+    > configure -release -opensource -shared -fast -stl -webkit
+    > nmake
+    
+in Qt build folder. 
+
+One frequent error when compiling Qt with VS2012 is related to the JavaScript engine in handling HashSet.h. When you run into an error which looks like this:
+
+    .\wtf/HashSet.h(191) : error C2664: 'std::pair<_Ty1,_Ty2>::pair(const std::pair<_Ty1,_Ty2> &)' : cannot convert parameter 1 from 'std::pair<_Ty1,_Ty2>' to 'const std::pair<_Ty1,_Ty2> &'
+            with
+            [
+                _Ty1=WTF::HashTableConstIteratorAdapter<WTF::HashTable<WTF::StringImpl *,WTF::StringImpl*,WTF::IdentityExtractor<WTF::StringImpl*>,WTF::StringHash,WTF::HashTraits<WTF::StringImpl*>,WTF::HashTraits<WTF::StringImpl *>>,WTF::StringImpl *>,
+                _Ty2=bool
+            ]
+            and
+            [
+                _Ty1=WTF::HashTableIterator<WTF::StringImpl *,WTF::StringImpl *,WTF::IdentityExtractor<WTF::StringImpl*>,WTF::StringHash,WTF::HashTraits<WTF::StringImpl*>,WTF::HashTraits<WTF::StringImpl *>>,
+                _Ty2=bool
+            ]
+            and
+            [
+                _Ty1=WTF::HashTableConstIteratorAdapter<WTF::HashTable<WTF::StringImpl*,WTF::StringImpl*,WTF::IdentityExtractor<WTF::StringImpl*>,WTF::StringHash,WTF::HashTraits<WTF::StringImpl*>,WTF::HashTraits<WTF::StringImpl*>>,WTF::StringImpl *>,
+                _Ty2=bool
+            ]
+            Reason: cannot convert from 'std::pair<_Ty1,_Ty2>' to 'const std::pair<_Ty1,_Ty2>'
+            with
+            [
+                _Ty1=WTF::HashTableIterator<WTF::StringImpl *,WTF::StringImpl *,WTF::IdentityExtractor<WTF::StringImpl *>,WTF::StringHash,WTF::HashTraits<WTF::StringImpl *>,WTF::HashTraits<WTF::StringImpl *>>,
+                _Ty2=bool
+            ]
+            and
+            [
+                _Ty1=WTF::HashTableConstIteratorAdapter<WTF::HashTable<WTF::StringImpl *,WTF::StringImpl *,WTF::IdentityExtractor<WTF::StringImpl *>,WTF::StringHash,WTF::HashTraits<WTF::StringImpl*>,WTF::HashTraits<WTF::StringImpl *>>,WTF::StringImpl *>,
+                _Ty2=bool
+            ]
+            No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+
+            wtf\text\AtomicString.cpp(80) : see reference to function template instantiation 'std::pair<_Ty1,_Ty2> WTF::HashSet<ValueArg>::add<T,HashTranslator>(const T &)' being compiled
+            with
+            [
+                _Ty1=WTF::HashTableConstIteratorAdapter<WTF::HashTable<WTF::StringImpl *,WTF::StringImpl *,WTF::IdentityExtractor<WTF::StringImpl *>,WTF::StringHash,WTF::HashTraits<WTF::StringImpl*>,WTF::HashTraits<WTF::StringImpl *>>,WTF::StringImpl *>,
+                _Ty2=bool,
+                ValueArg=WTF::StringImpl *,
+                T=const char *,
+                HashTranslator=WTF::CStringTranslator
+            ]
+            wtf\text\AtomicString.cpp(80) : see reference to function template instantiation 'std::pair<_Ty1,_Ty2> WTF::HashSet<ValueArg>::add<T,HashTranslator>(const T &)' being compiled
+            with
+            [
+                _Ty1=WTF::HashTableConstIteratorAdapter<WTF::HashTable<WTF::StringImpl *,WTF::StringImpl *,WTF::IdentityExtractor<WTF::StringImpl *>,WTF::StringHash,WTF::HashTraits<WTF::StringImpl *>,WTF::HashTraits<WTF::StringImpl *>>,WTF::StringImpl *>,
+                _Ty2=bool,
+                ValueArg=WTF::StringImpl *,
+                T=const char *,
+                HashTranslator=WTF::CStringTranslator
+            ]
+            wtf\text\AtomicString.cpp(130) : see reference to function template instantiation 'WTF::PassRefPtr<T> WTF::addToStringTable<const char*,WTF::CStringTranslator>(const char &)' being compiled
+            with
+            [
+                T=WTF::StringImpl
+            ]
+    CString.cpp
+    StringBuilder.cpp
+    StringImpl.cpp
+    StringStatics.cpp
+    WTFString.cpp
+    Generating Code...
+    NMAKE : fatal error U1077: '"C:\Program Files\Microsoft Visual Studio 11.0\VC\BIN\cl.EXE"' : return code '0x2'
+    Stop.
+    NMAKE : fatal error U1077: '"C:\Program Files\Microsoft Visual Studio 11.0\VC\BIN\nmake.exe"' : return code '0x2'
+    Stop.
+    NMAKE : fatal error U1077: 'cd' : return code '0x2'
+    Stop.
+    NMAKE : fatal error U1077: 'cd' : return code '0x2'
+
+
+Then follow the steps mentioned in http://qt-project.org/forums/viewthread/17771. Namely change both HashSet::add functions to:
+
+    template<typename T, typename U, typename V>
+    inline pair<typename HashSet<T, U, V>::iterator, bool> HashSet<T, U, V>::add(const ValueType& value)
+    {
+        typedef typename HashSet<T, U, V>::iterator iter_type;
+        auto& temp = m_impl.add(value);
+        return make_pair((iter_type)temp.first, temp.second);
+    }
+
+    template<typename Value, typename HashFunctions, typename Traits>
+    template<typename T, typename HashTranslator>
+    inline pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool>
+    HashSet<Value, HashFunctions, Traits>::add(const T& value)
+    {
+        typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, HashTranslator> Adapter;
+        typedef typename HashSet<Value, HashFunctions, Traits>::iterator iter_type;
+        auto& temp = m_impl.template addPassingHashCode<T, T, Adapter>(value, value);
+        return make_pair((iter_type)temp.first, temp.second);
+    }    
+    
+
+As another recomendation on Windows platforms: set the path to the Qt top folder as QTDIR environment variable.
+
+E.g.:
+
+    > set QTDIR=C:\qt-everywhere-opensource-src-4.8.3
+    
+For finding the Boost library one should set yet another environment variable: BOOST_ROOT to point to the boost root installation.
+
+E.g.:
+
+    > set BOOST_ROOT=C:\boost_1_52_0
+     
+Be sure to open up a command prompt from the Visual Studio Tools (normaly found in Start/Programms/Visual Studio VERSION/Tools). Always use this command prompt and *not* cmd.exe since the later lacks certain MSVC specific environment settings and cl.exe and nmake.exe won't work properly.
+
+
+On Windows unzip the wirecloud-webkit-0.1.zip package accordingly.
+
+    
+
+2. Compilation
+==============
+
+
+Unix/Linux:
+-----------
+
+Step into the "build" folder, invoke cmake and then make.
+
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
+
+If sucessfull you may run the client directly from within the build 
+folder:
+
+    $ bin/wirecloud-webkit
+
+
+Windows:
+--------    
+
+On Windows, assuming you have all stuff installed as mentioned at (1). Start a Visual Studio Shell. Hence, a normal "cmd" won't work. This shell is found in the Startmenu under Start/Programms/Visual Studio VERSION/Tools.
+
+    > mkdir build
+    > cd build
+    > cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+    > nmake
+    
+
+Invoking the client then should be the same as under Unix:
+
+    > bin\wirecloud-webkit
+        
+
+    
+3. Config
+=========
+
+You may fine-tune the look by installing qt-config and play around with the values. There are plenty of themes.
+
+However, you may thus also change the look and feel of any Qt based application like Skype on Linux for instance.
+    
+    
+----
+            
+Oliver Maurhart
+oliver.maurhart@ait.ac.at
+    
+Copyright (C) 2013, AIT Austrian Institute of Technology
+AIT Austrian Institute of Technology GmbH
+Donau-City-Strasse 1 | 1220 Vienna | Austria
+http://www.ait.ac.at

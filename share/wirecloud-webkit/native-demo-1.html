@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<!-- 
+
+    sample HTML file with embedded JavaScript code
+    which calls native C/C++ code from inside the 
+    script.
+    
+    Note: the object 'crisma_native' is added at
+          runtime by the C/C++ enviroment to the
+          JavaScript engine. This object does not
+          exists here and will cause some errors
+          in normal WebBrowsers
+-->
+
+<head>
+
+    <script>
+        // earlierst possible JavaScript execution point
+        crisma_native.slot("First Time JS execution: call into native C/C++ code.");
+    </script>
+    
+    <title>Crisma Native C/C++ WireCloud WebKit interaction Demo</title>
+    <script src="http://cdn.jsdelivr.net/jquery/1.10.1/jquery.min.js" type="text/javascript"></script>
+    
+</head>
+
+<body>
+
+<fieldset>
+    <legend>Click this button to invoke a native C/C++ object</legend>
+    <div>
+        <input id="btn1" type="button" value="Go native ..." />
+    </div>
+</fieldset>
+
+</body>
+
+<script type="text/javascript">
+
+    // arbitrary call into C/C++
+    $(function() { 
+        crisma_native.slot("Second call into native C/C++ code."); 
+    });
+
+    // connect a button click event with a native call
+    $('#btn1').click(function() { crisma_native.slot("This is a CRISMA call into a C++ object"); });
+    
+</script>
+
+</html>
